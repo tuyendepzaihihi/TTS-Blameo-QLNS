@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  mariadb:
+    image: mariadb:10.5
+    container_name: mariadb-tts
+    environment:
+      MYSQL_DATABASE: "demoQLNS"
+      MYSQL_USER: "tuyenmetmoi"
+      MYSQL_PASSWORD: "54321"
+      MYSQL_ROOT_PASSWORD: "12345"
+      command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./demoQLNS.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3308:3306"
+
+  spring-boot:
+    image: tuyenmetmoi/tts-blameo-qlns:v2.0.0
+    container_name: tts-blameo
+    #    environment:
+    #      SPRING_DATASOURCE_URL: "jdbc:mariadb://localhost:13306/fruitweb"
+    #      SPRING_DATASOURCE_USERNAME: "root"
+    #      SPRING_DATASOURCE_PASSWORD: "123"
+    ports:
+      - "9000:8080"
+    depends_on:
+      - mariadb
+#    build:
+#      context: "./"
+#      dockerfile: "Dockerfile"
+#      restart: always
+#create network
+#networks:
+#  backend:
+#    name: springboot-app-network
+volumes:
+  mariadb-data:
